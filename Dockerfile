@@ -26,9 +26,8 @@ ENV PATH=/root/.local/bin:$PATH
 
 COPY src/ src/
 COPY configs/ configs/
-COPY data/sample/ data/sample/
 
-RUN mkdir -p reports models logs data/raw data/processed results
+RUN mkdir -p reports models logs data/raw data/processed data/sample results
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
