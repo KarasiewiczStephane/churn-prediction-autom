@@ -20,8 +20,8 @@ data/processed/
 !data/sample/
 !data/sample/*.csv
 
-# Models
-models/
+# Models (top-level only, not src/models/)
+/models/
 *.pkl
 *.pt
 *.h5
