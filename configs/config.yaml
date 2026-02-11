@@ -1,0 +1,30 @@
+data:
+  raw_path: data/raw
+  processed_path: data/processed
+  sample_path: data/sample
+  test_size: 0.2
+  val_size: 0.2
+
+model:
+  automl_max_runtime_secs: 300
+  optuna_trials: 50
+  cv_folds: 5
+  random_state: 42
+
+feature:
+  correlation_threshold: 0.95
+  mi_top_k: 15
+  selection_method: boruta
+
+logging:
+  level: INFO
+  log_dir: logs
+
+database:
+  path: results/results.duckdb
+
+business:
+  high_value_threshold: 100.0
+  medium_value_threshold: 50.0
+  intervention_cost: 20.0
+  intervention_success_rate: 0.3
