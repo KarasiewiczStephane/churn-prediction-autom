@@ -1,0 +1,12 @@
+services:
+  churn-predict:
+    build: .
+    volumes:
+      - ./data:/app/data
+      - ./reports:/app/reports
+      - ./models:/app/models
+      - ./configs:/app/configs
+    environment:
+      - KAGGLE_USERNAME=${KAGGLE_USERNAME}
+      - KAGGLE_KEY=${KAGGLE_KEY}
+    command: ["train", "--time-budget", "60"]
