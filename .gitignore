@@ -13,16 +13,22 @@ venv/
 
 # Data (large files)
 data/raw/
-*.csv
+data/processed/
 *.parquet
+
+# Keep sample data for CI
 !data/sample/
+!data/sample/*.csv
 
 # Models
+models/
 *.pkl
-*.joblib
 *.pt
 *.h5
 *.onnx
+
+# Results
+results/
 
 # IDE
 .vscode/
@@ -34,6 +40,15 @@ Thumbs.db
 
 # Logs
 *.log
+logs/
+
+# Reports (generated)
+reports/
+
+# Coverage
+.coverage
+htmlcov/
+coverage.xml
 
 # Task Master (keep local)
 .taskmaster/
