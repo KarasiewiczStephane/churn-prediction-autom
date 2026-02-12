@@ -238,3 +238,48 @@ class DataPreprocessor:
         pd.DataFrame({"y": data.y_test}).to_parquet(output_path / "y_test.parquet")
 
         logger.info("Saved preprocessed data to %s", output_path)
+
+    def save_state(self, path: str = "models/preprocessor.joblib") -> None:
+        """Save the fitted preprocessor state to disk.
+
+        Args:
+            path: File path for the saved state.
+        """
+        import joblib
+
+        state = {
+            "label_encoders": self.label_encoders,
+            "scaler": self.scaler,
+            "numerical_cols": self.numerical_cols,
+            "categorical_cols": self.categorical_cols,
+            "random_state": self.random_state,
+        }
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        joblib.dump(state, path)
+        logger.info("Saved preprocessor state to %s", path)
+
+    @classmethod
+    def load_state(cls, path: str = "models/preprocessor.joblib") -> "DataPreprocessor":
+        """Load a fitted preprocessor from disk.
+
+        Args:
+            path: File path to the saved state.
+
+        Returns:
+            A DataPreprocessor instance with restored fitted state.
+
+        Raises:
+            FileNotFoundError: If the state file does not exist.
+        """
+        import joblib
+
+        if not Path(path).exists():
+            raise FileNotFoundError(f"Preprocessor state not found: {path}")
+
+        state = joblib.load(path)
+        preprocessor = cls(random_state=state["random_state"])
+        preprocessor.label_encoders = state["label_encoders"]
+        preprocessor.scaler = state["scaler"]
+        preprocessor.numerical_cols = state["numerical_cols"]
+        preprocessor.categorical_cols = state["categorical_cols"]
+        return preprocessor

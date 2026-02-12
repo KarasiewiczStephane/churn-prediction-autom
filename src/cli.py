@@ -79,6 +79,7 @@ def train(
     preprocessor = DataPreprocessor(random_state=config.model.random_state)
     data = preprocessor.fit_transform(df)
     preprocessor.save(data, config.data.processed_path)
+    preprocessor.save_state()
     click.echo("Step 2/5: Data preprocessed.")
 
     selector = FeatureSelector(db=db)
@@ -94,6 +95,14 @@ def train(
     selected_features = selector.get_selected_features(method_key)
     X_train = data.X_train[selected_features]
     X_test = data.X_test[selected_features]  # noqa: F841 (X_val used by H2O path)
+
+    import json
+    from pathlib import Path
+
+    Path("models").mkdir(parents=True, exist_ok=True)
+    with open("models/selected_features.json", "w") as f:
+        json.dump(selected_features, f)
+
     click.echo(
         f"Step 3/5: Feature selection complete ({len(selected_features)} features)."
     )
@@ -168,14 +177,25 @@ def train(
 @click.pass_context
 def predict(ctx: click.Context, input_path: str, output: str) -> None:
     """Predict churn on new customer data using the best model."""
+    import json
+
+    from src.data.preprocessor import DataPreprocessor
+
     registry = ModelRegistry()
     model, metadata = registry.get_best_model()
 
-    df = pd.read_csv(input_path)
-    predictions = model.predict_proba(df)[:, 1]
-    df["churn_probability"] = predictions
-    df["churn_predicted"] = (predictions >= 0.5).astype(int)
-    df.to_csv(output, index=False)
+    preprocessor = DataPreprocessor.load_state()
+    with open("models/selected_features.json") as f:
+        selected_features = json.load(f)
+
+    df_raw = pd.read_csv(input_path)
+    df_transformed = preprocessor.transform(df_raw)
+    df_predict = df_transformed[selected_features]
+
+    predictions = model.predict_proba(df_predict)[:, 1]
+    df_raw["churn_probability"] = predictions
+    df_raw["churn_predicted"] = (predictions >= 0.5).astype(int)
+    df_raw.to_csv(output, index=False)
 
     click.echo(f"Predictions saved to {output}")
 
