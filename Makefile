@@ -27,7 +27,7 @@ docker-build:
 	docker build -t churn-predict:latest .
 
 docker-run:
-	docker run --rm -v $(PWD)/data:/app/data -v $(PWD)/reports:/app/reports churn-predict:latest train
+	docker run --rm -v $(PWD)/data:/app/data -v $(PWD)/models:/app/models -v $(PWD)/reports:/app/reports churn-predict:latest train
 
 docker-shell:
 	docker run --rm -it --entrypoint /bin/bash -v $(PWD):/app churn-predict:latest
