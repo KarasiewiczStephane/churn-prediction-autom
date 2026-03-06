@@ -1,4 +1,4 @@
-.PHONY: install test lint clean run docker-build docker-run docker-shell format pre-commit
+.PHONY: install test lint clean run dashboard docker-build docker-run docker-shell format pre-commit
 
 install:
 	pip install -r requirements.txt
@@ -22,6 +22,9 @@ clean:
 
 run:
 	python -m src.cli --help
+
+dashboard:
+	streamlit run src/dashboard/app.py
 
 docker-build:
 	docker build -t churn-predict:latest .

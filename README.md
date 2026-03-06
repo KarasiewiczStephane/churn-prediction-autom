@@ -14,6 +14,7 @@
 - **Model Evaluation**: ROC curves, precision-recall curves, confusion matrices, calibration plots, and McNemar's statistical test
 - **Model Registry**: Versioned model storage with metadata tracking and DuckDB results database
 - **Business Impact**: Revenue-at-risk calculation, cost-benefit analysis, optimal intervention threshold, and executive summary
+- **Streamlit Dashboard**: Interactive visualization of model performance, feature importance, churn segments, and business impact
 - **CLI Interface**: Full pipeline control via Click-based command line
 - **Docker Support**: Multi-stage build with health checks for containerized deployment
 - **CI/CD**: GitHub Actions pipeline with linting, testing (80%+ coverage), and Docker build verification
@@ -37,35 +38,53 @@
 │ - Revenue    │    │ - ROC/PR     │
 │ - Cost-Bene. │    │ - McNemar    │
 │ - Exec Summ. │    │ - Comparison │
-└──────────────┘    └──────────────┘
+└──────┬───────┘    └──────────────┘
+       │
+       v
+┌──────────────┐
+│  Streamlit   │
+│  Dashboard   │
+│              │
+│ - Metrics    │
+│ - Charts     │
+│ - Impact     │
+└──────────────┘
 ```
 
 ## Quick Start
 
-```bash
-# Clone
-git clone https://github.com/KarasiewiczStephane/churn-prediction-autom.git
-cd churn-prediction-autom
+1. **Clone and install dependencies**
 
-# Install dependencies
-pip install -r requirements.txt
+   ```bash
+   git clone https://github.com/KarasiewiczStephane/churn-prediction-autom.git
+   cd churn-prediction-autom
+   make install
+   ```
 
-# Configure Kaggle API credentials
-export KAGGLE_USERNAME=your_username
-export KAGGLE_KEY=your_api_key
+2. **Configure Kaggle API credentials** (required for dataset download)
 
-# Run the full training pipeline
-python -m src.cli train --time-budget 300
+   ```bash
+   export KAGGLE_USERNAME=your_username
+   export KAGGLE_KEY=your_api_key
+   ```
 
-# Predict on new data (requires training first)
-python -m src.cli predict --input data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv --output predictions.csv
+   The `train` command calls `DataDownloader.download()` which uses the Kaggle API to fetch the [Telco Customer Churn](https://www.kaggle.com/datasets/blastchar/telco-customer-churn) dataset into `data/raw/`. Alternatively, download the CSV manually and place it at `data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv`.
 
-# Run business impact analysis
-python -m src.cli impact
+3. **Run the full training pipeline**
 
-# View results
-cat reports/model_comparison_report.md
-```
+   ```bash
+   python -m src.cli train --time-budget 300
+   ```
+
+   This downloads the data, preprocesses it, runs feature selection, trains Optuna-tuned LightGBM and Logistic Regression models, evaluates them, and generates reports in `reports/`.
+
+4. **Launch the Streamlit dashboard**
+
+   ```bash
+   make dashboard
+   ```
+
+   Opens a Streamlit dashboard at `http://localhost:8501` with model comparison, feature importance, churn distribution by segment, ROC curve, and business impact metrics. The dashboard uses synthetic demo data and does not require running the training pipeline first.
 
 ## CLI Commands
 
@@ -186,6 +205,9 @@ make install
 # Run tests with coverage
 make test
 
+# Launch Streamlit dashboard
+make dashboard
+
 # Lint with ruff
 make lint
 
@@ -228,6 +250,8 @@ churn-prediction-autom/
 │   │   ├── optuna_trainer.py           # Optuna hyperparameter optimization
 │   │   ├── evaluator.py               # Model evaluation and visualization
 │   │   └── registry.py                # Model versioning and registry
+│   ├── dashboard/
+│   │   └── app.py                     # Streamlit dashboard (demo data)
 │   ├── business/
 │   │   ├── impact_calculator.py        # Revenue-at-risk and cost-benefit analysis
 │   │   └── report_generator.py         # Markdown report generation
