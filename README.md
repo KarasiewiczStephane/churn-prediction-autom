@@ -1,10 +1,10 @@
 # Customer Churn Prediction with AutoML
 
+> Automated churn prediction pipeline with feature selection, Optuna-tuned models, and business impact analysis — from raw data to executive-ready cost-benefit reports.
+
 ![CI](https://github.com/KarasiewiczStephane/churn-prediction-autom/actions/workflows/ci.yml/badge.svg)
 ![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-
-> End-to-end machine learning pipeline for predicting customer churn using the Telco Customer Churn dataset. Features Optuna-tuned LightGBM and Logistic Regression with automated feature selection, model evaluation, and business impact analysis.
 
 ## Features
 
@@ -298,6 +298,10 @@ This project uses the [Telco Customer Churn](https://www.kaggle.com/datasets/bla
 **Target variable**: `Churn` (Yes/No) -- approximately 26.5% churn rate.
 
 **Key features**: tenure, MonthlyCharges, TotalCharges, Contract type, InternetService, PaymentMethod, and more.
+
+## Author
+
+**Stéphane Karasiewicz** — [skarazdata.com](https://skarazdata.com) | [LinkedIn](https://www.linkedin.com/in/stephane-karasiewicz/)
 
 ## License
 
